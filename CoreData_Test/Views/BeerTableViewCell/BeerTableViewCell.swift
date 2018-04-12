@@ -9,7 +9,10 @@
 import UIKit
 
 class BeerTableViewCell: UITableViewCell {
-
+    
+    @IBOutlet weak var beerLogoImageView: UIImageView!
+    @IBOutlet weak var beerNameLabel: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

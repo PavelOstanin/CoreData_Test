@@ -17,6 +17,7 @@ class BreweryListViewController: UIViewController{
     var coreDataStack: CoreDataStack!
     
     var breweries: [Brewery] = []
+    var currentBrewery: Brewery!
     
     lazy var fetchedResultsController: NSFetchedResultsController<Brewery> = {
         let fetchRequest: NSFetchRequest<Brewery> = Brewery.fetchRequest()
@@ -57,7 +58,7 @@ class BreweryListViewController: UIViewController{
                 let name = result["name"] as! String?
                 let descriptions = result["description"] as! String?
                 var logoURL = ""
-                if let images = result["images"] as! Dictionary<String, Any>!{
+                if let images = result["images"] as! Dictionary<String, Any>?{
                     logoURL = images["squareMedium"] as! String
                 }
                 //
@@ -86,12 +87,37 @@ extension BreweryListViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BreweryTableViewCell", for: indexPath) as! BreweryTableViewCell
         let brewery = breweries[indexPath.row]
         cell.breweryTitleLabel.text = brewery.name
-        cell.breweryLogoImageView.sd_setImage(with: URL(string: brewery.logoURL ?? ""))
-
+        cell.breweryLogoImageView.sd_setImage(with: URL(string: brewery.logoURL ?? ""), placeholderImage: UIImage.init(named: "no-image-available")) { (image, error, cash, url) in
+            
+        }
         return cell
     }
 }
 
+// MARK: UITableViewDelegate
+extension BreweryListViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        currentBrewery = breweries[indexPath.row]
+        performSegue(withIdentifier: segueBeersList, sender: self)
+    }
+    
+}
+
+//MARK: SEGUE
+extension BreweryListViewController {
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == segueBeersList{
+            let beersListVC = segue.destination as! BeersListViewController
+            beersListVC.brewery = currentBrewery
+            beersListVC.coreDataStack = coreDataStack
+        }
+    }
+    
+}
+
+// MARK: NSFetchedResultsControllerDelegate
 extension BreweryListViewController: NSFetchedResultsControllerDelegate {
 }
 

@@ -16,8 +16,10 @@ extension Beer {
     }
     
     @NSManaged public var id: String?
+    @NSManaged public var breweryId: String?
     @NSManaged public var name: String?
     @NSManaged public var descriptions: String?
     @NSManaged public var iconURL: String?
     @NSManaged public var imageURL: String?
+    
 }
